@@ -178,3 +178,11 @@ weights/
 # Other OS files
 .DS_Store
 Thumbs.db
+
+# Added exceptions
+SecurityBERT Model Developement/data/
+SecurityBERT Model Developement/tokenizer/corpus.txt
+SecurityBERT Model Developement/outputs/reports/xai_report.json
+*.h5
+*.bin
+*.json
