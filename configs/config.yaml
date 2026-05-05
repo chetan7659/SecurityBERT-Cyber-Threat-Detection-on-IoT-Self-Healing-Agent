@@ -1,0 +1,116 @@
+# ─────────────────────────────────────────────────────────────
+# SecurityBERT Configuration — Paper Table IV
+# ─────────────────────────────────────────────────────────────
+
+project:
+  name        : SecurityBERT
+  version     : "1.0"
+  description : "BERT-based cybersecurity threat detection for IoT/IIoT"
+  random_state: 42
+
+# ── Paths ─────────────────────────────────────────────────────
+paths:
+  raw_data      : data/raw/DNN-EdgeIIoT-dataset.csv
+  cleaned_data  : data/processed/cleaned_dataset.csv
+  features_data : data/processed/features_extracted.csv
+  ppfle_data    : data/processed/ppfle_encoded.csv
+  tokenized_data: data/processed/tokenized_sequences.pt
+  contextual    : data/processed/contextual_repr.pt
+  tokenizer_dir : tokenizer/
+  checkpoint_dir: checkpoints/
+  figures_dir   : outputs/figures/
+  reports_dir   : outputs/reports/
+
+# ── Dataset ───────────────────────────────────────────────────
+dataset:
+  target_column : Attack_type
+  chunk_size    : 50000
+  train_ratio   : 0.80
+  drop_columns:
+    - frame.time
+    - ip.src_host
+    - ip.dst_host
+    - arp.src.proto_ipv4
+    - arp.dst.proto_ipv4
+    - http.file_data
+    - http.request.full_uri
+    - icmp.transmit_timestamp
+    - http.request.uri.query
+    - tcp.options
+    - tcp.payload
+    - tcp.srcport
+    - tcp.dstport
+    - udp.port
+    - mqtt.msg
+    - Attack_label
+
+# ── PPFLE ─────────────────────────────────────────────────────
+ppfle:
+  hash_algorithm : md5
+  separator      : "$"
+  encoding       : utf-8
+
+# ── Tokenizer (Paper Table IV) ────────────────────────────────
+tokenizer:
+  vocab_size    : 5000
+  min_frequency : 2
+  max_seq_len   : 512
+  special_tokens:
+    - "<s>"
+    - "<pad>"
+    - "</s>"
+    - "<unk>"
+    - "<mask>"
+  corpus_file   : tokenizer/corpus.txt
+  vocab_file    : tokenizer/vocab.json
+  merges_file   : tokenizer/merges.txt
+  label_map_file: tokenizer/label_map.json
+
+# ── Model (Paper Table III + Table IV) ───────────────────────
+model:
+  vocab_size          : 5000
+  hidden_size         : 128
+  num_hidden_layers   : 2
+  num_attention_heads : 4
+  intermediate_size   : 512
+  max_position_embeddings: 512
+  hidden_act          : gelu
+  hidden_dropout_prob : 0.1
+  attention_probs_dropout_prob: 0.1
+  type_vocab_size     : 2
+  layer_norm_eps      : 1.0e-12
+  pad_token_id        : 1
+  num_classes         : 15
+
+# ── Training (Paper Table IV) ────────────────────────────────
+training:
+  batch_size          : 128
+  num_epochs          : 4
+  learning_rate       : 2.0e-5
+  warmup_ratio        : 0.10
+  weight_decay        : 0.01
+  max_grad_norm       : 1.0
+  algorithm_2_chunk   : 5000
+
+# ── Fine-tuning ───────────────────────────────────────────────
+finetuning:
+  learning_rate : 1.0e-5
+  num_epochs    : 4
+  warmup_ratio  : 0.06
+
+# ── Class Imbalance — Option 3 ────────────────────────────────
+imbalance:
+  strategy        : focal_loss_class_weights_stratified
+  focal_gamma     : 2.0
+  focal_reduction : mean
+  sampler_replacement: true
+
+# ── Evaluation ────────────────────────────────────────────────
+evaluation:
+  primary_metric  : weighted_f1
+  secondary_metric: macro_f1
+  critical_metric : recall
+  monitor_classes :
+    - MITM
+    - Fingerprinting
+    - Ransomware
