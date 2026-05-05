@@ -1,0 +1,24 @@
+SecurityBERT — Model Summary
+============================================================
+Architecture     : BERT (4 encoder layers)
+Hidden size      : 128
+Attention heads  : 4
+Intermediate size: 512
+Vocab size       : 5,000
+Max seq length   : 512
+Total parameters : 1,121,039
+Model size       : 4.5 MB
+
+Training Strategy (Option 3 — Imbalance)
+----------------------------------------
+Focal Loss γ     : 2.0
+Class weights    : computed per class
+Sampler          : WeightedRandomSampler
+
+Final Evaluation Results
+----------------------------------------
+Accuracy         : 97.27%  (Paper: 98.20%)
+Weighted F1      : 0.9742  (Paper: 0.98)
+Macro F1         : 0.8116  (Paper: 0.84)
+Mean ROC-AUC     : 0.998921
+Inference time   : 0.0016s  (Paper CPU: 0.1582s)

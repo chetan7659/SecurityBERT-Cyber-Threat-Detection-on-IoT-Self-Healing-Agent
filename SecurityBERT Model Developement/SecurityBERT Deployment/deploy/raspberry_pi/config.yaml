@@ -1,0 +1,40 @@
+# ─────────────────────────────────────────────────────────
+# SecurityBERT Pi Configuration
+# Edit sender_email, sender_password, receiver_email
+# ─────────────────────────────────────────────────────────
+
+model:
+  bert_checkpoint    : /home/pi/securitybert/checkpoints/final_model.pt
+  ppo_checkpoint     : /home/pi/securitybert/checkpoints/ppo_agent_trained.pt
+  tokenizer_dir      : /home/pi/securitybert/tokenizer/
+  device             : cpu
+  conf_threshold     : 0.60      # min BERT confidence to trigger healing
+
+detection:
+  interface          : eth0      # eth0=LAN cable | wlan0=WiFi
+  window_seconds     : 2.0       # capture window per inference cycle
+  min_packets        : 3         # min packets before running inference
+  alert_cooldown_sec : 30        # seconds between same-class email alerts
+  normal_class       : Normal
+
+network:
+  pi_lan_ip          : 192.168.100.1
+  laptop_lan_ip      : 192.168.100.2
+  pi_wifi_ip         : auto      # auto-detected at runtime
+
+email:
+  smtp_server        : smtp.gmail.com
+  smtp_port          : 587
+  sender_email       : chetansethy2001@gmail.com
+  sender_password    : cczr btth ooey ekjx
+  receiver_email     : chetansethy18@gmail.com 
+  subject_prefix     : "[SecurityBERT]"
+
+logging:
+  log_file           : /home/pi/securitybert/logs/detector.log
+  heal_log           : /home/pi/securitybert/logs/healing_actions.log
+  level              : INFO
+  console            : true
+
+healing:
+  simulate           : false     # true=log only | false=execute real commands
